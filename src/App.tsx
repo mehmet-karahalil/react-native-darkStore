@@ -2,25 +2,28 @@ import React from 'react';
 import {FlatList, SafeAreaView, StyleSheet, Text, TextInput, View} from 'react-native';
 import itemsData from './news_data.json';
 import NewsCard from './components/itemsCard';
+import SearchBar from './components/searchBar';
 
 function App(): React.JSX.Element {
-  const [text, onChangeText] = React.useState('Search...');
+  const [items, setItems] = React.useState(itemsData);
   const lastItemIndex = itemsData.length - 1;
+  const handleSearch = (text: string) => {
+    const filteredItems = itemsData.filter((item) => {
+      return item.title.toLowerCase().includes(text.toLowerCase());
+    });
+    setItems(filteredItems);
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       <View>
         <Text style={styles.title} >Dark Store</Text>
       </View>
-      <TextInput
-          style={styles.input}
-          onChangeText={onChangeText}
-          value={text}
-        />
+      <SearchBar onChange={handleSearch} />
       <FlatList
         horizontal={false}
         numColumns={2}
-        data={itemsData}
+        data={items}
         renderItem={({item, index}) => {
           if (index === lastItemIndex) {
             return <NewsCard items={item} style={{flex: 1, width: '100%'}} />
